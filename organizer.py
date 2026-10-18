@@ -1,6 +1,7 @@
-from pathlib import Path
-import argparse
+from pathlib import Path 
 
+import argparse
+import shutil
 CATEGORIES = {
 
     ".jpg": "Images",
@@ -25,9 +26,26 @@ def list_files(folder):
             print(f"{item.name} -> {extension}")
 
 
+def move_file(item, folder, dry_run):
+    category = get_category(item)
+    destination = folder / category
+    if dry_run:
+        print(f"Would move {item.name} -> {category}")
+    else:
+        destination.mkdir(exist_ok=True)
+        shutil.move(str(item), str(destination / item.name))
+        print(f"Moved {item.name} -> {category}")
 
-parser = argparse.ArgumentParser(description="Organizer files by file type")
+
+def organize(folder, dry_run):
+    for item in list(folder.iterdir()):
+        if item.is_file():
+            move_file(item, folder, dry_run)
+    
+
+parser = argparse.ArgumentParser(description="Organize files by file type")
 parser.add_argument("folder", help="Folder to organize")
+parser.add_argument("--dry-run", action="store_true", help="show what would happen without moving files")
 args = parser.parse_args()
 
-list_files(args.folder)
+organize(Path(args.folder), args.dry_run)   
