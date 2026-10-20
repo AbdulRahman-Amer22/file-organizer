@@ -29,19 +29,32 @@ def list_files(folder):
 def move_file(item, folder, dry_run):
     category = get_category(item)
     destination = folder / category
+    target = get_unique_path(destination, item.name)
     if dry_run:
-        print(f"Would move {item.name} -> {category}")
+        print(f"Would move {item.name} -> {category / target.name}")
     else:
         destination.mkdir(exist_ok=True)
-        shutil.move(str(item), str(destination / item.name))
-        print(f"Moved {item.name} -> {category}")
+        shutil.move(str(item), str(target))
+        print(f"Moved {item.name} -> {target}")
 
 
 def organize(folder, dry_run):
     for item in list(folder.iterdir()):
         if item.is_file():
             move_file(item, folder, dry_run)
-    
+
+def get_unique_path(destination, file_name):
+    file_name = Path(file_name)
+    stem = file_name.stem
+    suffix = file_name.suffix
+    candidate = destination / file_name
+    i = 0
+    while candidate.exists():
+        i +=1
+        candidate = destination / f"{stem}_{i}{suffix}"
+    return candidate
+
+
 
 parser = argparse.ArgumentParser(description="Organize files by file type")
 parser.add_argument("folder", help="Folder to organize")
