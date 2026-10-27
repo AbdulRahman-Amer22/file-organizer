@@ -31,11 +31,11 @@ def move_file(item, folder, dry_run):
     destination = folder / category
     target = get_unique_path(destination, item.name)
     if dry_run:
-        print(f"Would move {item.name} -> {category / target.name}")
+        print(f"Would move {item.name} -> {category} / {target.name}")
     else:
         destination.mkdir(exist_ok=True)
         shutil.move(str(item), str(target))
-        print(f"Moved {item.name} -> {target}")
+        print(f"Moved {item.name} -> {category} / {target.name}")
 
 
 def organize(folder, dry_run):
