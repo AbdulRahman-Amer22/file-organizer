@@ -40,15 +40,18 @@ def move_file(item, folder, dry_run):
 
 def organize(folder, dry_run):
     for item in list(folder.iterdir()):
-        if item.is_file():
-            move_file(item, folder, dry_run)
+            if item.is_file():
+                move_file(item, folder, dry_run)
 
+
+
+    
 def get_unique_path(destination, file_name):
     file_name = Path(file_name)
     stem = file_name.stem
     suffix = file_name.suffix
     candidate = destination / file_name
-    i = 0
+    i = 0   
     while candidate.exists():
         i +=1
         candidate = destination / f"{stem}_{i}{suffix}"
@@ -60,5 +63,11 @@ parser = argparse.ArgumentParser(description="Organize files by file type")
 parser.add_argument("folder", help="Folder to organize")
 parser.add_argument("--dry-run", action="store_true", help="show what would happen without moving files")
 args = parser.parse_args()
+
+folder = Path(args.folder)
+if not folder.exists():
+    parser.error(f"'{folder}' does not exist")
+if not folder.is_dir():
+    parser.error(f"'{folder}' is not a folder")
 
 organize(Path(args.folder), args.dry_run)   
