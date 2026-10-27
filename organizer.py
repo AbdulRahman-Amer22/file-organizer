@@ -27,6 +27,8 @@ def list_files(folder):
 
 
 def move_file(item, folder, dry_run):
+    if item.name == "photo2.jpg":
+        raise PermissionError("test")
     category = get_category(item)
     destination = folder / category
     target = get_unique_path(destination, item.name)
@@ -40,8 +42,12 @@ def move_file(item, folder, dry_run):
 
 def organize(folder, dry_run):
     for item in list(folder.iterdir()):
-            if item.is_file():
-                move_file(item, folder, dry_run)
+        if item.is_file():
+            try: 
+                    move_file(item, folder, dry_run)
+            except OSError as e:
+                print(f"Could not move {item.name}: {e}")
+
 
 
 
