@@ -26,9 +26,7 @@ def list_files(folder):
             print(f"{item.name} -> {extension}")
 
 
-def move_file(item, folder, dry_run):
-    if item.name == "photo2.jpg":
-        raise PermissionError("test")
+def move_file(item, folder, dry_run):   
     category = get_category(item)
     destination = folder / category
     target = get_unique_path(destination, item.name)
@@ -65,15 +63,19 @@ def get_unique_path(destination, file_name):
 
 
 
-parser = argparse.ArgumentParser(description="Organize files by file type")
-parser.add_argument("folder", help="Folder to organize")
-parser.add_argument("--dry-run", action="store_true", help="show what would happen without moving files")
-args = parser.parse_args()
+def main():
+    parser = argparse.ArgumentParser(description="Organize files by file type")
+    parser.add_argument("folder", help="Folder to organize")
+    parser.add_argument("--dry-run", action="store_true", help="show what would happen without moving files")
+    args = parser.parse_args()
 
-folder = Path(args.folder)
-if not folder.exists():
-    parser.error(f"'{folder}' does not exist")
-if not folder.is_dir():
-    parser.error(f"'{folder}' is not a folder")
+    folder = Path(args.folder)
+    if not folder.exists():
+        parser.error(f"'{folder}' does not exist")
+    if not folder.is_dir():
+        parser.error(f"'{folder}' is not a folder")
 
-organize(Path(args.folder), args.dry_run)   
+    organize(folder, args.dry_run)   
+
+if __name__ == "__main__":
+    main()
